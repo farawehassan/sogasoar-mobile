@@ -5,7 +5,6 @@ import 'package:sogasoarventures/ui/navs/customers/customer_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:intl/intl.dart';
 import 'package:sogasoarventures/main.dart';
 import 'dart:io' show Platform;
 
@@ -39,12 +38,6 @@ class NotificationManager {
     );
   }
 
-  /// Converting [dateTime] in string format to return a formatted time
-  /// of weekday, month, day and year
-  String _getFormattedTime(String dateTime) {
-    return DateFormat('MMM d, ''yyyy').format(DateTime.parse(dateTime)).toString();
-  }
-
   Future configureCustomerNotifications() async {
     Future<Map<CustomerReport, Customer>> customers = futureValue.getCustomersWithOutstandingBalance();
     await customers.then((value) {
@@ -52,13 +45,13 @@ class NotificationManager {
       if(value.length != 0) {
         //List<Customer> customer = value.values;
         List<CustomerReport> customerReport = value.keys.toList();
-        var now = DateTime.now().day;
+        var now = DateTime.now();
         var dueDate;
         for (int j = 0; j < customerReport.length; j++) {
           if (customerReport[j].paid == false) {
-            dueDate = DateTime.parse(customerReport[j].dueDate).day;
-            var difference = now - dueDate;
-            if (difference >= 0) {
+            dueDate = DateTime.parse(customerReport[j].dueDate);
+            var difference = now.difference(dueDate);
+            if (difference.inDays >= 0) {
               print("Customer = $difference" );
               showCustomerNotificationDaily(
                   0, "Customer", "You have customers "
