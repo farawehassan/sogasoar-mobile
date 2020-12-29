@@ -370,7 +370,7 @@ class _MonthReportState extends State<MonthReport> {
       }
       else {
         this._searchIcon = Icon(Icons.search);
-        this._appBarTitle = Text('${widget.month}, ${DateFormat('yyyy').format(now)}');
+        this._appBarTitle = Text('${widget.month}, ${widget.year}');
         _filteredSales = _sales;
         _filter.clear();
       }
