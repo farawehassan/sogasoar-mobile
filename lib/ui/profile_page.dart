@@ -1,5 +1,4 @@
 import 'package:sogasoarventures/bloc/future_values.dart';
-import 'package:sogasoarventures/bloc/profit_charts.dart';
 import 'package:sogasoarventures/bloc/year_line_charts.dart';
 import 'package:sogasoarventures/model/store_details.dart';
 import 'package:sogasoarventures/ui/navs/profile/workers.dart';
@@ -7,6 +6,7 @@ import 'package:sogasoarventures/utils/constants.dart';
 import 'package:sogasoarventures/utils/reusable_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sogasoarventures/utils/size_config.dart';
 
 /// A StatefulWidget class that displays the business's profile
 /// only the admin can have access to this page
@@ -42,8 +42,8 @@ class _ProfileState extends State<Profile> {
     await details.then((value) {
       if (!mounted) return;
       setState(() {
-        _cpNetWorth = Constants.money(value.cpNetWorth).output.symbolOnLeft;
-        _spNetWorth = Constants.money(value.spNetWorth).output.symbolOnLeft;
+        _cpNetWorth = Constants.money(value.cpNetWorth);
+        _spNetWorth = Constants.money(value.spNetWorth);
         _numberOfItems = value.totalItems;
         _totalProfit = value.totalProfitMade;
       });
@@ -61,6 +61,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF061D5C),
@@ -226,80 +227,72 @@ class _ProfileState extends State<Profile> {
             SizedBox(height: 30.0,),
             Container(
               margin: EdgeInsets.all(4.0),
-              child: Center(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: ProfileCard(
-                        cardChild: ProfitCharts(),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Column(
-                        children: <Widget>[
-                          ProfileCard(
-                            cardChild: Column(
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child:Text(
-                                    'Profit Made',
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Text(
-                                      '${Constants.money(_totalProfit).output.symbolOnLeft}',
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Color(0xFF061D5C),
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    )
-                                ),
-                              ],
+              width: SizeConfig.screenWidth - 8,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  /*Container(
+                  width: (SizeConfig.screenWidth / 2) - 12,
+                  child: ProfileCard(
+                    cardChild: ProfitCharts(),
+                  ),
+                ),*/
+                  ProfileCard(
+                    cardChild: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child:Text(
+                            'Profit',
+                            style: TextStyle(
+                              fontSize: 20.0,
                             ),
                           ),
-                          SizedBox(height: 30.0,),
-                          ProfileCard(
-                            cardChild: Column(
-                              children: <Widget>[
-                                Text(
-                                  'Items',
-                                  style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Text(
-                                      '$_numberOfItems',
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Color(0xFF061D5C),
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    )
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                        Container(
+                            width: (SizeConfig.screenWidth / 2) - 12,
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              '${Constants.money(_totalProfit)}',
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: Color(0xFF061D5C),
+                                fontWeight: FontWeight.w800,
+                              ),
+                            )
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  SizedBox(width: 8),
+                  ProfileCard(
+                    cardChild: Column(
+                      children: <Widget>[
+                        Text(
+                          'Items',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                          ),
+                        ),
+                        Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              '$_numberOfItems',
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: Color(0xFF061D5C),
+                                fontWeight: FontWeight.w800,
+                              ),
+                            )
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
+            SizedBox(height: 30.0)
           ],
         ),
       ),

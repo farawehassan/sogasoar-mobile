@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:sogasoarventures/model/linear_sales.dart';
+import 'package:sogasoarventures/model/reportsDB.dart';
 import 'package:sogasoarventures/utils/constants.dart';
 import 'future_values.dart';
 
@@ -37,17 +38,19 @@ class _ProfitChartsState extends State<ProfitCharts> {
   Map<String, double> dataMap = Map();
 
   void getReports() async {
-    Future<List<LinearSales>> report = futureValue.getYearReports();
+    Future<List<Reports>> report = futureValue.getAllReportsFromDB();
     await report.then((value) {
+      List<LinearSales> sales = futureValue.getYearReports(value);
       if (!mounted) return;
       setState(() {
-        for(int i = 0; i < value.length; i++){
-          profitMade.add(value[i].profit);
+        for(int i = 0; i < sales.length; i++){
+          profitMade.add(sales[i].profit);
         }
       });
-      getQuarterlyMonth();
-    }).catchError((onError){
-      Constants.showMessage(onError);
+      //getQuarterlyMonth();
+    }).catchError((error){
+      print(error);
+      Constants.showMessage(error.toString());
     });
   }
 
@@ -134,7 +137,7 @@ class _ProfitChartsState extends State<ProfitCharts> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            '+ N${roundDouble(average, 2)}',
+            '+ ${Constants.money(roundDouble(average, 2))}',
             style: TextStyle(
               fontSize: 18.0,
               color: Color(0xFF061D5C),

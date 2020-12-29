@@ -12,11 +12,19 @@ import 'package:intl/intl.dart';
 /// A StatefulWidget class that displays a Month's Reports details
 class MonthReport extends StatefulWidget {
 
-  MonthReport({@required this.month});
+  MonthReport({
+    @required this.month,
+    @required this.year,
+    @required this.userType
+  });
 
   static const String id = 'month_reports';
 
   final String month;
+
+  final int year;
+
+  final String userType;
 
   @override
   _MonthReportState createState() => _MonthReportState();
@@ -54,7 +62,7 @@ class _MonthReportState extends State<MonthReport> {
   List<Reports> monthReport = List();
 
   /// A TextEditingController to control the searchText on the AppBar
-  final TextEditingController _filter = new TextEditingController();
+  final TextEditingController _filter = TextEditingController();
 
   /// Variable of String to hold the searchText on the AppBar
   String _searchText = "";
@@ -70,18 +78,6 @@ class _MonthReportState extends State<MonthReport> {
 
   /// Variable to hold a Widget of Text for the appBarText
   Widget _appBarTitle;
-
-  /// Variable to hold the type of the user logged in
-  String _userType;
-
-  /// Setting the current user's type logged in to [userType]
-  void _getCurrentUser() async {
-    await futureValue.getCurrentUser().then((user) {
-      _userType = user.type;
-    }).catchError((Object error) {
-      print(error.toString());
-    });
-  }
 
   /// Checking if the filter controller is empty to reset the
   /// _searchText on the appBar to "" and the filteredSales to Sales
@@ -138,30 +134,34 @@ class _MonthReportState extends State<MonthReport> {
   /// If the payment's mode of a report is transfer
   ///
   /// sets [_totalSalesPrice] to [_availableCash] + [_totalTransfer]
-  void _getSales() async {
-    List<Map> tempList = new List();
-    Future<List<Reports>> dailySales = futureValue.getMonthReports(widget.month);
-    await dailySales.then((value) {
-      monthReport.addAll(value);
-      _dataLength = value.length;
-      Map details = {};
-      for (int i = 0; i < value.length; i++){
-        _totalProfitMade += double.parse(value[i].quantity) * (double.parse(value[i].unitPrice) - double.parse(value[i].costPrice));
-        details = {'id': value[i].id, 'qty':'${value[i].quantity}', 'productName': '${value[i].productName}', 'costPrice':'${value[i].costPrice}', 'unitPrice':'${value[i].unitPrice}','totalPrice':'${value[i].totalPrice}', 'paymentMode':'${value[i].paymentMode}', 'time':'${value[i].createdAt}', 'customerName':'${value[i].customerName}'};
-        if(value[i].paymentMode == 'Cash'){
-          _availableCash += double.parse(value[i].totalPrice);
+  Future<void> _getSales() async {
+    List<Map> tempList = List();
+    Future<List<Reports>> reports = futureValue.getAllReportsFromDB();
+    await reports.then((allReports) {
+      List<Reports> value = futureValue.getMonthReports(widget.month, allReports, year: widget.year);
+      if (!mounted) return;
+      setState(() {
+        monthReport.addAll(value);
+        _dataLength = value.length;
+        Map details = {};
+        for (int i = 0; i < value.length; i++){
+          _totalProfitMade += double.parse(value[i].quantity) * (double.parse(value[i].unitPrice) - double.parse(value[i].costPrice));
+          details = {'id': value[i].id, 'qty':'${value[i].quantity}', 'productName': '${value[i].productName}', 'costPrice':'${value[i].costPrice}', 'unitPrice':'${value[i].unitPrice}','totalPrice':'${value[i].totalPrice}', 'paymentMode':'${value[i].paymentMode}', 'time':'${value[i].createdAt}', 'customerName':'${value[i].customerName}'};
+          if(value[i].paymentMode == 'Cash'){
+            _availableCash += double.parse(value[i].totalPrice);
+          }
+          else if(value[i].paymentMode == 'Transfer'){
+            _totalTransfer += double.parse(value[i].totalPrice);
+          }
+          tempList.add(details);
         }
-        else if(value[i].paymentMode == 'Transfer'){
-          _totalTransfer += double.parse(value[i].totalPrice);
-        }
-        tempList.add(details);
-      }
-      _totalSalesPrice = _availableCash + _totalTransfer;
-    }).catchError((onError){
-      print(onError.toString());
-      Constants.showMessage(onError.toString());
+        _totalSalesPrice = _availableCash + _totalTransfer;
+      });
+    }).catchError((error){
+      print(error);
+      Constants.showMessage(error.toString());
     });
-    if (!mounted) return;
+    if(!mounted)return;
     setState(() {
       _sales = tempList;
       _filteredSales = _sales;
@@ -173,7 +173,7 @@ class _MonthReportState extends State<MonthReport> {
   void _getOutstandingPayment() async {
     switch(widget.month) {
       case 'Jan': {
-        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(now.year, DateTime.january));
+        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(widget.year, DateTime.january));
         value.then((value) {
           if (!mounted) return;
           setState(() {
@@ -187,7 +187,7 @@ class _MonthReportState extends State<MonthReport> {
       break;
 
       case 'Feb': {
-        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(now.year, DateTime.february));
+        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(widget.year, DateTime.february));
         value.then((value) {
           if (!mounted) return;
           setState(() {
@@ -201,7 +201,7 @@ class _MonthReportState extends State<MonthReport> {
       break;
 
       case 'Mar': {
-        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(now.year, DateTime.march));
+        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(widget.year, DateTime.march));
         value.then((value) {
           if (!mounted) return;
           setState(() {
@@ -215,7 +215,7 @@ class _MonthReportState extends State<MonthReport> {
       break;
 
       case 'Apr': {
-        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(now.year, DateTime.april));
+        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(widget.year, DateTime.april));
         value.then((value) {
           if (!mounted) return;
           setState(() {
@@ -229,7 +229,7 @@ class _MonthReportState extends State<MonthReport> {
       break;
 
       case 'May': {
-        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(now.year, DateTime.may));
+        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(widget.year, DateTime.may));
         value.then((value) {
           if (!mounted) return;
           setState(() {
@@ -243,7 +243,7 @@ class _MonthReportState extends State<MonthReport> {
       break;
 
       case 'Jun': {
-        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(now.year, DateTime.june));
+        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(widget.year, DateTime.june));
         value.then((value) {
           if (!mounted) return;
           setState(() {
@@ -257,7 +257,7 @@ class _MonthReportState extends State<MonthReport> {
       break;
 
       case 'Jul': {
-        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(now.year, DateTime.july));
+        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(widget.year, DateTime.july));
         value.then((value) {
           if (!mounted) return;
           setState(() {
@@ -271,7 +271,7 @@ class _MonthReportState extends State<MonthReport> {
       break;
 
       case 'Aug': {
-        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(now.year, DateTime.august));
+        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(widget.year, DateTime.august));
         value.then((value) {
           if (!mounted) return;
           setState(() {
@@ -285,7 +285,7 @@ class _MonthReportState extends State<MonthReport> {
       break;
 
       case 'Sep': {
-        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(now.year, DateTime.september));
+        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(widget.year, DateTime.september));
         value.then((value) {
           if (!mounted) return;
           setState(() {
@@ -299,7 +299,7 @@ class _MonthReportState extends State<MonthReport> {
       break;
 
       case 'Oct': {
-        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(now.year, DateTime.october));
+        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(widget.year, DateTime.october));
         value.then((value) {
           if (!mounted) return;
           setState(() {
@@ -313,7 +313,7 @@ class _MonthReportState extends State<MonthReport> {
       break;
 
       case 'Nov': {
-        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(now.year, DateTime.november));
+        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(widget.year, DateTime.november));
         value.then((value) {
           if (!mounted) return;
           setState(() {
@@ -327,7 +327,7 @@ class _MonthReportState extends State<MonthReport> {
       break;
 
       case 'Dec': {
-        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(now.year, DateTime.december));
+        Future<double> value = reportValue.getMonthOutstandingPayment(DateTime(widget.year, DateTime.december));
         value.then((value) {
           if (!mounted) return;
           setState(() {
@@ -470,7 +470,7 @@ class _MonthReportState extends State<MonthReport> {
                   ),
                 ),
                 Text(
-                  '${Constants.money(_totalSalesPrice).output.symbolOnLeft}',
+                  '${Constants.money(_totalSalesPrice)}',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF061D5C),
@@ -492,7 +492,7 @@ class _MonthReportState extends State<MonthReport> {
                   ),
                 ),
                 Text(
-                  '${Constants.money(_outstandingPayment).output.symbolOnLeft}',
+                  '${Constants.money(_outstandingPayment)}',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF061D5C),
@@ -501,7 +501,7 @@ class _MonthReportState extends State<MonthReport> {
               ],
             ),
           ),
-          _userType == 'Admin' ? Container(
+          widget.userType == 'Admin' ? Container(
             margin: EdgeInsets.only(left: 5.0, right: 40.0),
             padding: EdgeInsets.only(right: 20.0, top: 20.0),
             child: Row(
@@ -514,7 +514,7 @@ class _MonthReportState extends State<MonthReport> {
                   ),
                 ),
                 Text(
-                  '${Constants.money(_totalProfitMade).output.symbolOnLeft}',
+                  '${Constants.money(_totalProfitMade)}',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF061D5C),
@@ -558,7 +558,6 @@ class _MonthReportState extends State<MonthReport> {
     setState(() {
       _appBarTitle = Text('${widget.month}, ${DateFormat('yyyy').format(now)}');
     });
-    _getCurrentUser();
     _getSales();
     _getOutstandingPayment();
   }

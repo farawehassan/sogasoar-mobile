@@ -82,10 +82,10 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                       Text(customer.productName.toString()),
                     ),
                     DataCell(
-                      Text(Constants.money(double.parse(customer.unitPrice)).output.symbolOnLeft.toString()),
+                      Text(Constants.money(double.parse(customer.unitPrice))),
                     ),
                     DataCell(
-                      Text(Constants.money(double.parse(customer.totalPrice)).output.symbolOnLeft.toString()),
+                      Text(Constants.money(double.parse(customer.totalPrice))),
                     ),
                   ]
               );
@@ -104,7 +104,7 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                   ),
                 ),
                 Text(
-                  '${Constants.money(double.parse(customerList.totalAmount)).output.symbolOnLeft}',
+                  '${Constants.money(double.parse(customerList.totalAmount))}',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF061D5C),

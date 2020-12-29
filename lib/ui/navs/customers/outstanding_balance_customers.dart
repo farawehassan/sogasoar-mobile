@@ -233,7 +233,7 @@ class _OutstandingBalanceState extends State<OutstandingBalance> {
                               left: 12.0,
                             ),
                             child: Text(
-                              "Balance - ${Constants.money(balance).output.symbolOnLeft}",
+                              "Balance - ${Constants.money(balance)}",
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Color(0xFF004C7F),
@@ -336,10 +336,10 @@ class _OutstandingBalanceState extends State<OutstandingBalance> {
                       Text(customer.productName.toString()),
                     ),
                     DataCell(
-                      Text(Constants.money(double.parse(customer.unitPrice)).output.symbolOnLeft.toString()),
+                      Text(Constants.money(double.parse(customer.unitPrice))),
                     ),
                     DataCell(
-                      Text(Constants.money(double.parse(customer.totalPrice)).output.symbolOnLeft.toString()),
+                      Text(Constants.money(double.parse(customer.totalPrice))),
                     ),
                   ]
               );
@@ -358,7 +358,7 @@ class _OutstandingBalanceState extends State<OutstandingBalance> {
                   ),
                 ),
                 Text(
-                  '${Constants.money(double.parse(customerList.totalAmount)).output.symbolOnLeft}',
+                  '${Constants.money(double.parse(customerList.totalAmount))}',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF061D5C),
@@ -380,7 +380,7 @@ class _OutstandingBalanceState extends State<OutstandingBalance> {
                   ),
                 ),
                 Text(
-                  '${Constants.money(double.parse(customerList.paymentMade)).output.symbolOnLeft}',
+                  '${Constants.money(double.parse(customerList.paymentMade))}',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF061D5C),
@@ -402,7 +402,7 @@ class _OutstandingBalanceState extends State<OutstandingBalance> {
                   ),
                 ),
                 Text(
-                  '${Constants.money(balance).output.symbolOnLeft}',
+                  '${Constants.money(balance)}',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: Colors.red,
@@ -551,7 +551,7 @@ class _OutstandingBalanceState extends State<OutstandingBalance> {
                               ),
                             ),
                             Text(
-                              '${Constants.money(double.parse(details.totalAmount)).output.symbolOnLeft}',
+                              '${Constants.money(double.parse(details.totalAmount))}',
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF061D5C),
@@ -569,7 +569,7 @@ class _OutstandingBalanceState extends State<OutstandingBalance> {
                               ),
                             ),
                             Text(
-                              '${Constants.money(double.parse(details.paymentMade)).output.symbolOnLeft}',
+                              '${Constants.money(double.parse(details.paymentMade))}',
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF061D5C),
@@ -593,7 +593,7 @@ class _OutstandingBalanceState extends State<OutstandingBalance> {
                           ),
                         ),
                         Text(
-                          '${Constants.money(balance).output.symbolOnLeft}',
+                          '${Constants.money(balance)}',
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             color: Colors.red,
@@ -767,7 +767,7 @@ class _OutstandingBalanceState extends State<OutstandingBalance> {
               Align(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  'Confirm ${Constants.money(double.parse(payment)).output.symbolOnLeft} '
+                  'Confirm ${Constants.money(double.parse(payment))} '
                       'to be updated to ${customer.name}\'s payment',
                   style: TextStyle(
                     fontSize: 15.0,

@@ -240,7 +240,7 @@ class _AllCustomersState extends State<AllCustomers> {
                                 left: 12.0,
                               ),
                               child: Text(
-                                "Last - ${Constants.money(lastTotalAmount).output.symbolOnLeft}",
+                                "Last - ${Constants.money(lastTotalAmount)}",
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   color: Color(0xFF004C7F),

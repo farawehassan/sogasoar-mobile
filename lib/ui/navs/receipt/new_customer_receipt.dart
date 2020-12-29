@@ -272,10 +272,10 @@ class _NewCustomerReceiptState extends State<NewCustomerReceipt> {
               Text(product['product'].toString()),
             ),
             DataCell(
-              Text(Constants.money(double.parse(product['unitPrice'])).output.symbolOnLeft.toString()),
+              Text(Constants.money(double.parse(product['unitPrice']))),
             ),
             DataCell(
-              Text(Constants.money(double.parse(product['totalPrice'])).output.symbolOnLeft.toString()),
+              Text(Constants.money(double.parse(product['totalPrice']))),
             ),
           ]);
         }).toList(),
@@ -286,8 +286,7 @@ class _NewCustomerReceiptState extends State<NewCustomerReceipt> {
   /// A widget to return a container of payment details and other information
   /// regarding to the customer
   AnimatedContainer _paymentDetailsTable() {
-    _totalAmountController.text = Constants.money(_totalPrice).output
-        .symbolOnLeft.toString();
+    _totalAmountController.text = Constants.money(_totalPrice);
     return AnimatedContainer(
       margin: EdgeInsets.all(_paddingSize),
       height: _animatedHeight,
@@ -584,8 +583,7 @@ class _NewCustomerReceiptState extends State<NewCustomerReceipt> {
                                     _amountPaid = double.parse(value);
                                     _outstandingBalance = _totalPrice - _amountPaid;
                                     _outstandingBalanceController.text =
-                                        Constants.money(_outstandingBalance)
-                                            .output.symbolOnLeft.toString();
+                                        Constants.money(_outstandingBalance);
                                   });
                                 },
                                 decoration: InputDecoration(

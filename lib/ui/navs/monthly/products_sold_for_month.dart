@@ -25,7 +25,7 @@ class _MonthlyProductSoldState extends State<MonthlyProductSold> {
   var futureValue = FutureValues();
 
   /// A variable holding my report data as a map
-  var _data = new Map();
+  var _data = Map();
 
   /// Variable to hold the type of the user logged in
   String _userType;
@@ -128,13 +128,13 @@ class _MonthlyProductSoldState extends State<MonthlyProductSold> {
               DataCell(Text(report['sn'].toString()),),
               DataCell(Text(report['product'].toString()),),
               DataCell(Text(report['quantitySold'].toString()),),
-              DataCell(Text(Constants.money(report['totalSales']).output.symbolOnLeft),),
-              DataCell(Text(Constants.money(report['profit']).output.symbolOnLeft),)
+              DataCell(Text(Constants.money(report['totalSales'])),),
+              DataCell(Text(Constants.money(report['profit'])),)
             ] : [
               DataCell(Text(report['sn'].toString()),),
               DataCell(Text(report['product'].toString()),),
               DataCell(Text(report['quantitySold'].toString()),),
-              DataCell(Text(Constants.money(report['totalSales']).output.symbolOnLeft),),
+              DataCell(Text(Constants.money(report['totalSales'])),),
             ]
         )).toList(),
       ),

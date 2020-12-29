@@ -41,7 +41,6 @@ class NotificationManager {
   Future configureCustomerNotifications() async {
     Future<Map<CustomerReport, Customer>> customers = futureValue.getCustomersWithOutstandingBalance();
     await customers.then((value) {
-      print(value);
       if(value.length != 0) {
         //List<Customer> customer = value.values;
         List<CustomerReport> customerReport = value.keys.toList();
@@ -52,7 +51,7 @@ class NotificationManager {
             dueDate = DateTime.parse(customerReport[j].dueDate);
             var difference = now.difference(dueDate);
             if (difference.inDays >= 0) {
-              print("Customer = $difference" );
+              //print("Customer = $difference" );
               showCustomerNotificationDaily(
                   0, "Customer", "You have customers "
                   "yet to settle his/her payment."
@@ -72,7 +71,7 @@ class NotificationManager {
   void initNotifications() async {
     /// initialise the plugin.
     var initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = IOSInitializationSettings(
         requestAlertPermission: false,
         requestBadgePermission: false,
@@ -124,7 +123,7 @@ class NotificationManager {
             onPressed: () async {
               Navigator.of(context, rootNavigator: true).pop();
               if(payload == 'customer payload'){
-                print('notification payload: ' + payload);
+                //print('notification payload: ' + payload);
                 await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => CustomerPage()),
@@ -144,7 +143,7 @@ class NotificationManager {
       debugPrint('notification payload: ' + payload);
     }
     else if(payload == 'customer payload'){
-      print('notification payload: ' + payload);
+      //print('notification payload: ' + payload);
       await Navigator.push(
         MyApp.navigatorKey.currentContext,
         MaterialPageRoute(builder: (context) => CustomerPage()),
